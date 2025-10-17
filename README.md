@@ -3,166 +3,308 @@
 ![Roblox](https://img.shields.io/badge/Roblox-Script-00a2ff?style=for-the-badge&logo=roblox&logoColor=white)
 ![Lua](https://img.shields.io/badge/Lua-5.1-2C2D72?style=for-the-badge&logo=lua&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-3.0-blue?style=for-the-badge)
 
-A modern, sleek, and customizable UI toggle button for Roblox games. Hide/show all UI elements with a single click while keeping the toggle button always visible.
+A modern, ultra-compact, and highly customizable UI toggle button for Roblox games. Hide/show all UI elements with a single click while keeping the toggle button always accessible and non-intrusive.
 
 ## ✨ Features
 
 - 🎨 **Modern Design** - Gradient background, glowing effects, and smooth animations
 - 📱 **Cross-Platform** - Automatically detects and adapts for PC and Mobile devices
-- 🖱️ **Draggable** - Move the button anywhere on your screen
+- 🖱️ **Draggable** - Move the button anywhere on your screen with ease
 - 💫 **Smooth Animations** - Pulse, breathing, hover, and scale effects
 - 🎯 **Smart State Management** - Remembers which UIs were hidden/shown
 - 🔄 **Persistent** - Doesn't reset when character respawns
-- ⚡ **Lightweight** - Optimized performance with proper cleanup
-- 🎨 **Customizable** - Easy to modify colors, sizes, and behavior
+- ⚡ **Lightweight** - Ultra-compact size with optimized performance
+- 🎨 **Fully Customizable** - Easy to modify colors, sizes, and behavior
+- 🏆 **Competition Ready** - Minimal screen footprint for competitive gameplay
 
-## 🚀 Installation
+## 📏 Button Sizes
 
-### Method 1: Direct Script
-1. Copy the script from `ui-toggle.lua`
-2. Paste into a **LocalScript** in `StarterPlayer` → `StarterPlayerScripts`
-3. Play the game!
+### Current Version (v3.0) - Ultra-Compact
+- **PC (Desktop)**: 35 × 22 pixels
+- **Mobile (Touch)**: 45 × 28 pixels
 
-### Method 2: Executor (Client-Side)
+### Size History
+| Version | PC Size  | Mobile Size | Description      |
+|---------|----------|-------------|------------------|
+| v1.0    | 40×40px  | 55×55px     | Initial square   |
+| v2.0    | 50×30px  | 60×35px     | Rectangular      |
+| v3.0    | 35×22px  | 45×28px     | **Ultra-compact** ✨ |
+
+## 🚀 Quick Start
+
+### Method 1: LocalScript (Recommended)
+1. Open Roblox Studio
+2. Navigate to `StarterPlayer` → `StarterPlayerScripts`
+3. Create a new **LocalScript**
+4. Copy and paste the code from `ui-toggle.lua`
+5. Test in game!
+
+### Method 2: Script Executor
 1. Copy the entire script
 2. Use your preferred Roblox script executor
-3. Execute the script
+3. Execute the script while in-game
 
-## 🎮 Usage
+## 🎮 How to Use
 
-### Basic Controls
-- **Click/Tap** the "UI" button to toggle all UIs on/off
-- **Drag** the button to reposition it anywhere on screen
-- **Hover** (PC only) for a subtle scale effect
+### Controls
+| Action | PC | Mobile |
+|--------|----|----|
+| **Toggle UI** | Left Click | Tap |
+| **Move Button** | Click & Drag | Touch & Drag |
+| **Hover Effect** | Mouse Over | N/A |
 
 ### Visual Indicators
-- 🔵 **Blue glow** - UIs are visible
-- 🔴 **Red glow** - UIs are hidden
-- 💫 **Breathing animation** - Button border pulses slowly when idle
+- 🔵 **Blue Border & Text** - All UIs are visible
+- 🔴 **Red Border & Text** - All UIs are hidden
+- 💫 **Breathing Animation** - Button is idle and ready
+- ✨ **Pulse Effect** - Action confirmed
 
 ## ⚙️ Configuration
 
-Edit the `SETTINGS` table at the top of the script to customize:
+Customize the button by editing the `SETTINGS` table:
 
 ```lua
 local SETTINGS = {
-	BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 30),      -- PC button size
-	BUTTON_SIZE_MOBILE = UDim2.new(0, 60, 0, 35),  -- Mobile button size
-	BUTTON_POSITION = UDim2.new(0, 10, 0, 10),     -- Initial position
-	ANIMATION_SPEED = 0.3,                          -- Toggle animation speed
-	TEXT_VISIBLE = "UI",                            -- Text when UIs visible
-	TEXT_HIDDEN = "UI",                             -- Text when UIs hidden
-	COLOR_VISIBLE = Color3.fromRGB(100, 200, 255), -- Blue color
-	COLOR_HIDDEN = Color3.fromRGB(255, 100, 100),  -- Red color
-	ENABLE_DRAGGING = true,                         -- Allow dragging
-	SAVE_POSITION = true                            -- Save position (future)
+    BUTTON_SIZE_PC = UDim2.new(0, 35, 0, 22),      -- PC dimensions
+    BUTTON_SIZE_MOBILE = UDim2.new(0, 45, 0, 28),  -- Mobile dimensions
+    BUTTON_POSITION = UDim2.new(0, 10, 0, 10),     -- Starting position
+    ANIMATION_SPEED = 0.3,                          -- Toggle animation speed
+    TEXT_VISIBLE = "UI",                            -- Text when visible
+    TEXT_HIDDEN = "UI",                             -- Text when hidden
+    COLOR_VISIBLE = Color3.fromRGB(100, 200, 255), -- Blue theme
+    COLOR_HIDDEN = Color3.fromRGB(255, 100, 100),  -- Red theme
+    ENABLE_DRAGGING = true,                         -- Allow repositioning
+    SAVE_POSITION = true                            -- Save position (planned)
 }
 ```
 
 ## 🎨 Customization Examples
 
-### Change Button Size
+### 1. Change Button Size
 ```lua
-BUTTON_SIZE_PC = UDim2.new(0, 70, 0, 40)  -- Larger button
+-- Larger button
+BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 30)
+BUTTON_SIZE_MOBILE = UDim2.new(0, 65, 0, 40)
+
+-- Smaller button (minimal)
+BUTTON_SIZE_PC = UDim2.new(0, 28, 0, 18)
+BUTTON_SIZE_MOBILE = UDim2.new(0, 38, 0, 24)
 ```
 
-### Change Colors
+### 2. Change Color Theme
 ```lua
-COLOR_VISIBLE = Color3.fromRGB(0, 255, 0)   -- Green when visible
-COLOR_HIDDEN = Color3.fromRGB(255, 165, 0)  -- Orange when hidden
+-- Green theme
+COLOR_VISIBLE = Color3.fromRGB(0, 255, 127)   -- Emerald green
+COLOR_HIDDEN = Color3.fromRGB(255, 69, 0)     -- Orange red
+
+-- Purple theme
+COLOR_VISIBLE = Color3.fromRGB(138, 43, 226)  -- Blue violet
+COLOR_HIDDEN = Color3.fromRGB(255, 20, 147)   -- Deep pink
+
+-- Dark theme
+COLOR_VISIBLE = Color3.fromRGB(200, 200, 200) -- Light gray
+COLOR_HIDDEN = Color3.fromRGB(80, 80, 80)     -- Dark gray
 ```
 
-### Change Text
+### 3. Change Button Text
 ```lua
+-- Simple ON/OFF
+TEXT_VISIBLE = "ON"
+TEXT_HIDDEN = "OFF"
+
+-- Show/Hide
 TEXT_VISIBLE = "SHOW"
 TEXT_HIDDEN = "HIDE"
+
+-- Custom emoji
+TEXT_VISIBLE = "👁️"
+TEXT_HIDDEN = "🚫"
 ```
 
-### Disable Dragging
+### 4. Change Position
 ```lua
-ENABLE_DRAGGING = false
+-- Top right corner
+BUTTON_POSITION = UDim2.new(1, -50, 0, 10)
+
+-- Bottom left corner
+BUTTON_POSITION = UDim2.new(0, 10, 1, -40)
+
+-- Center screen
+BUTTON_POSITION = UDim2.new(0.5, -20, 0.5, -15)
 ```
 
-## 📋 Features Breakdown
+### 5. Disable Dragging
+```lua
+ENABLE_DRAGGING = false  -- Button stays in fixed position
+```
 
-### 🎭 Animations
-- **Pulse Effect** - Button glows when clicked
-- **Breathing Animation** - Border continuously pulses
-- **Hover Effect** - Button scales up on mouse hover (PC only)
-- **Toggle Scale** - Button shrinks slightly when UIs are hidden
+## 🎭 Animation Features
 
-### 🛡️ Safety Features
-- **Automatic Cleanup** - Tweens and connections are properly disposed
-- **Error Handling** - Gracefully handles deleted UI elements
-- **State Preservation** - Remembers original UI states
-- **Non-Intrusive** - Doesn't affect game performance
+### Included Animations
+1. **Pulse Effect** - Glowing animation when button is clicked
+2. **Breathing Animation** - Border continuously pulses (2-second cycle)
+3. **Hover Effect** - Button scales up 10% on mouse hover (PC only)
+4. **Toggle Scale** - Button shrinks 10% when UIs are hidden
+5. **Color Transition** - Smooth color change between visible/hidden states
 
-### 📱 Platform Detection
-The script automatically detects your platform:
-- **PC** - Smaller button, hover effects enabled
-- **Mobile** - Larger button, touch-optimized
+### Animation Settings
+```lua
+-- Change animation speed
+ANIMATION_SPEED = 0.5  -- Slower (default: 0.3)
+ANIMATION_SPEED = 0.15 -- Faster
+```
 
-## 🔧 Technical Details
+## 🛡️ Safety & Performance
+
+### Built-in Safety Features
+✅ **Automatic Cleanup** - All tweens and connections properly disposed  
+✅ **Error Handling** - Gracefully handles deleted UI elements  
+✅ **State Preservation** - Remembers original UI states  
+✅ **Memory Management** - No memory leaks  
+✅ **Performance Optimized** - Minimal CPU/GPU usage  
+✅ **Non-Intrusive** - Doesn't interfere with game mechanics  
+
+### What Gets Hidden?
+- All `ScreenGui` objects in `PlayerGui`
+- **Except**: The toggle button itself (always visible)
+- **Note**: Some protected game UIs may not be affected
+
+## 📋 Technical Details
 
 ### Services Used
-- `Players` - Player management
-- `UserInputService` - Input detection and platform identification
-- `TweenService` - Smooth animations
-- `RunService` - Frame updates (if needed)
+```lua
+Players           -- Player management
+UserInputService  -- Input detection & platform ID
+TweenService      -- Smooth animations
+RunService        -- Frame updates (optional)
+```
 
 ### UI Hierarchy
 ```
 PlayerGui
 └── UIToggleGui (ScreenGui)
     └── ToggleButton (Frame)
-        ├── UICorner
-        ├── UIGradient
-        ├── UIStroke
-        ├── ShadowStroke
-        ├── TextButton
-        └── Glow (Frame)
+        ├── UICorner (Rounded corners)
+        ├── UIGradient (Modern gradient)
+        ├── UIStroke (Border)
+        ├── ShadowStroke (Shadow effect)
+        ├── TextButton (Clickable area)
+        └── Glow (Frame - Pulse effect)
+```
+
+### Platform Detection Logic
+```lua
+-- Automatic detection
+local isMobile = UserInputService.TouchEnabled 
+                 and not UserInputService.KeyboardEnabled
+
+-- Result:
+-- PC     → Smaller button, hover effects enabled
+-- Mobile → Larger button, touch optimized
 ```
 
 ## 🐛 Troubleshooting
 
 ### Button not appearing?
-- Make sure the script is in a **LocalScript**
-- Check that it's in `StarterPlayer` → `StarterPlayerScripts`
+**Solution:**
+- Ensure script is a **LocalScript** (not a regular Script)
+- Place in `StarterPlayer` → `StarterPlayerScripts`
+- Check Output console for errors
 
-### Button not hiding certain UIs?
-- Some UIs might be protected by the game
-- The toggle only affects ScreenGuis in PlayerGui
+### Button not hiding specific UIs?
+**Solution:**
+- Some UIs are protected by the game
+- Only affects `ScreenGui` objects in `PlayerGui`
+- CoreGui elements cannot be toggled
 
-### Button position resets?
-- Position saving is planned but not yet implemented
-- You can manually set `BUTTON_POSITION` in settings
+### Button position resets on respawn?
+**Solution:**
+- The script uses `ResetOnSpawn = false`
+- Position should persist across respawns
+- Manual position saving feature is planned for future updates
 
-## 📝 Changelog
+### Dragging doesn't work on mobile?
+**Solution:**
+- Touch dragging is supported
+- Try a longer press before dragging
+- Make sure `ENABLE_DRAGGING = true` in settings
 
-### Version 2.0.0 (Current)
-- ✨ Changed icon to "UI" text
-- 📏 Reduced button size for both PC and mobile
-- 🎨 Improved rectangular button design
-- 🔧 Optimized text sizing
+### Animations look choppy?
+**Solution:**
+- Check your device performance
+- Reduce animation speed: `ANIMATION_SPEED = 0.5`
+- Close other resource-intensive programs
 
-### Version 1.0.0
-- 🎉 Initial release
-- ✨ Basic toggle functionality
-- 🎨 Modern UI design
-- 📱 Cross-platform support
+### Button too small/large?
+**Solution:**
+- Adjust `BUTTON_SIZE_PC` or `BUTTON_SIZE_MOBILE` in settings
+- Recommended minimum: 25×18px (PC), 35×24px (Mobile)
+- Recommended maximum: 80×50px (PC), 100×60px (Mobile)
+
+## 🔄 Changelog
+
+### [3.0.0] - Current Version
+**Changed:**
+- Significantly reduced button size for ultra-compact design
+  - PC: 35×22px (was 50×30px) - 30% smaller
+  - Mobile: 45×28px (was 60×35px) - 25% smaller
+- Optimized text size for better readability at small scale
+  - PC: 11px (was 14px)
+  - Mobile: 13px (was 16px)
+
+**Improved:**
+- Minimal screen footprint for competitive gameplay
+- Non-intrusive professional appearance
+- Perfect balance between visibility and compactness
+
+**Maintained:**
+- All animations and visual effects
+- Dragging functionality
+- Cross-platform support
+- Touch-friendly interaction zones
+
+### [2.0.0] - Previous Version
+**Changed:**
+- Icon changed from symbols (☰/✕) to "UI" text
+- Rectangular button shape (was square)
+- Button dimensions adjusted for text display
+
+**Added:**
+- GothamBold font for modern appearance
+- Improved text rendering
+
+### [1.0.0] - Initial Release
+**Added:**
+- Basic toggle functionality
+- Modern UI design with gradients
+- Cross-platform support
+- Draggable button
+- Smooth animations
+- State management
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest new features
-- Submit pull requests
-- Improve documentation
+Contributions are welcome! Here's how you can help:
+
+### Ways to Contribute
+- 🐛 Report bugs via Issues
+- 💡 Suggest new features
+- 🔧 Submit pull requests
+- 📚 Improve documentation
+- ⭐ Star the repository
+
+### Pull Request Guidelines
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see below:
+This project is licensed under the MIT License.
 
 ```
 MIT License
@@ -190,12 +332,47 @@ SOFTWARE.
 
 ## 🌟 Support
 
-If you find this useful, please give it a ⭐!
+If you find this project useful:
+- ⭐ Star this repository
+- 🔀 Fork it for your own projects
+- 📢 Share it with others
+- 💬 Leave feedback in Issues
 
-## 📧 Contact
+## 📊 Stats
 
-For questions or suggestions, feel free to open an issue on GitHub.
+![GitHub stars](https://img.shields.io/github/stars/username/roblox-ui-toggle?style=social)
+![GitHub forks](https://img.shields.io/github/forks/username/roblox-ui-toggle?style=social)
+![GitHub issues](https://img.shields.io/github/issues/username/roblox-ui-toggle)
+
+## 📧 Contact & Support
+
+- **Issues**: [GitHub Issues](https://github.com/username/roblox-ui-toggle/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/username/roblox-ui-toggle/discussions)
+- **Questions**: Open an issue with the "question" label
+
+## 🎯 Roadmap
+
+### Planned Features
+- [ ] Position saving between sessions
+- [ ] Multiple theme presets
+- [ ] Keybind support for toggling
+- [ ] Animation customization GUI
+- [ ] Per-UI toggle controls
+- [ ] Sound effects option
+- [ ] Mobile gesture controls
+
+### Considering
+- [ ] Icon pack support
+- [ ] Multiple button styles
+- [ ] Integration with popular UI libraries
+- [ ] Statistics tracking
 
 ---
 
+<div align="center">
+
 **Made with ❤️ for the Roblox Community**
+
+[⬆ Back to Top](#-roblox-ui-toggle-button)
+
+</div>
