@@ -1,0 +1,339 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ========================================
+-- SETTINGS
+-- ========================================
+local SETTINGS = {
+	BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 50),
+	BUTTON_SIZE_MOBILE = UDim2.new(0, 70, 0, 70),
+	BUTTON_POSITION = UDim2.new(0, 10, 0, 10),
+	ANIMATION_SPEED = 0.3,
+	ICON_VISIBLE = "👁️",
+	ICON_HIDDEN = "👁️‍🗨️",
+	COLOR_VISIBLE = Color3.fromRGB(100, 200, 255),
+	COLOR_HIDDEN = Color3.fromRGB(255, 100, 100),
+	ENABLE_DRAGGING = true,
+	SAVE_POSITION = true -- Save button position between sessions
+}
+
+-- ========================================
+-- PLATFORM DETECTION
+-- ========================================
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local buttonSize = isMobile and SETTINGS.BUTTON_SIZE_MOBILE or SETTINGS.BUTTON_SIZE_PC
+
+-- ========================================
+-- STATE MANAGEMENT
+-- ========================================
+local uiHidden = false
+local originalStates = {}
+local activeTweens = {}
+
+-- ========================================
+-- CREATE UI ELEMENTS
+-- ========================================
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "UIToggleGui"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 999999 -- Ensure it's always on top
+screenGui.Parent = playerGui
+
+-- Frame container for button
+local buttonFrame = Instance.new("Frame")
+buttonFrame.Name = "ToggleButton"
+buttonFrame.Size = buttonSize
+buttonFrame.Position = SETTINGS.BUTTON_POSITION
+buttonFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+buttonFrame.BorderSizePixel = 0
+buttonFrame.Active = true
+buttonFrame.Parent = screenGui
+
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0.2, 0)
+corner.Parent = buttonFrame
+
+-- Gradient for modern effect
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 45, 60)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 35))
+}
+gradient.Rotation = 135
+gradient.Parent = buttonFrame
+
+-- Shadow effect
+local shadowStroke = Instance.new("UIStroke")
+shadowStroke.Name = "ShadowStroke"
+shadowStroke.Color = Color3.fromRGB(0, 0, 0)
+shadowStroke.Thickness = 3
+shadowStroke.Transparency = 0.7
+shadowStroke.Parent = buttonFrame
+
+-- Icon button (Eye icon)
+local iconButton = Instance.new("TextButton")
+iconButton.Name = "IconButton"
+iconButton.Size = UDim2.new(1, 0, 1, 0)
+iconButton.BackgroundTransparency = 1
+iconButton.Text = SETTINGS.ICON_VISIBLE
+iconButton.TextColor3 = SETTINGS.COLOR_VISIBLE
+iconButton.TextSize = isMobile and 32 or 24
+iconButton.Font = Enum.Font.GothamBold
+iconButton.AutoButtonColor = false
+iconButton.Parent = buttonFrame
+
+-- Glow effect frame
+local glowFrame = Instance.new("Frame")
+glowFrame.Name = "Glow"
+glowFrame.Size = UDim2.new(1, 0, 1, 0)
+glowFrame.BackgroundTransparency = 1
+glowFrame.BackgroundColor3 = SETTINGS.COLOR_VISIBLE
+glowFrame.BorderSizePixel = 0
+glowFrame.ZIndex = 0
+glowFrame.Parent = buttonFrame
+
+local glowCorner = Instance.new("UICorner")
+glowCorner.CornerRadius = UDim.new(0.2, 0)
+glowCorner.Parent = glowFrame
+
+-- Stroke for border
+local stroke = Instance.new("UIStroke")
+stroke.Color = SETTINGS.COLOR_VISIBLE
+stroke.Thickness = 2
+stroke.Transparency = 0.5
+stroke.Parent = buttonFrame
+
+-- ========================================
+-- HELPER FUNCTIONS
+-- ========================================
+
+-- Clean up active tweens
+local function cleanupTweens()
+	for _, tween in pairs(activeTweens) do
+		if tween then
+			pcall(function()
+				tween:Cancel()
+			end)
+		end
+	end
+	table.clear(activeTweens)
+end
+
+-- Save UI states
+local function saveUIStates()
+	originalStates = {}
+	for _, gui in pairs(playerGui:GetChildren()) do
+		if gui ~= screenGui and gui:IsA("ScreenGui") then
+			originalStates[gui] = gui.Enabled
+		end
+	end
+end
+
+-- Restore UI states safely
+local function restoreUIStates()
+	local keysToRemove = {}
+	for gui, state in pairs(originalStates) do
+		local success = pcall(function()
+			if gui and gui.Parent then
+				gui.Enabled = state
+			else
+				table.insert(keysToRemove, gui)
+			end
+		end)
+		if not success then
+			table.insert(keysToRemove, gui)
+		end
+	end
+	-- Clean up invalid entries
+	for _, key in ipairs(keysToRemove) do
+		originalStates[key] = nil
+	end
+end
+
+-- Create pulse animation
+local function createPulseEffect()
+	local pulseTween = TweenService:Create(
+		glowFrame, 
+		TweenInfo.new(0.3), 
+		{BackgroundTransparency = 0.7}
+	)
+	local fadeOutTween = TweenService:Create(
+		glowFrame, 
+		TweenInfo.new(0.3), 
+		{BackgroundTransparency = 1}
+	)
+	
+	pulseTween:Play()
+	pulseTween.Completed:Connect(function()
+		fadeOutTween:Play()
+	end)
+end
+
+-- ========================================
+-- TOGGLE UI FUNCTION
+-- ========================================
+local function toggleUI()
+	uiHidden = not uiHidden
+	
+	-- Animation
+	local tweenInfo = TweenInfo.new(
+		SETTINGS.ANIMATION_SPEED, 
+		Enum.EasingStyle.Back, 
+		Enum.EasingDirection.Out
+	)
+	
+	local targetSize = uiHidden and buttonSize * 0.9 or buttonSize
+	local scaleTween = TweenService:Create(buttonFrame, tweenInfo, {Size = targetSize})
+	table.insert(activeTweens, scaleTween)
+	scaleTween:Play()
+	
+	-- Update icon and colors
+	if uiHidden then
+		iconButton.Text = SETTINGS.ICON_HIDDEN
+		iconButton.TextColor3 = SETTINGS.COLOR_HIDDEN
+		stroke.Color = SETTINGS.COLOR_HIDDEN
+		glowFrame.BackgroundColor3 = SETTINGS.COLOR_HIDDEN
+		
+		-- Hide all UI except toggle button
+		saveUIStates()
+		for _, gui in pairs(playerGui:GetChildren()) do
+			if gui ~= screenGui and gui:IsA("ScreenGui") then
+				gui.Enabled = false
+			end
+		end
+	else
+		iconButton.Text = SETTINGS.ICON_VISIBLE
+		iconButton.TextColor3 = SETTINGS.COLOR_VISIBLE
+		stroke.Color = SETTINGS.COLOR_VISIBLE
+		glowFrame.BackgroundColor3 = SETTINGS.COLOR_VISIBLE
+		
+		-- Restore UI to original state
+		restoreUIStates()
+	end
+	
+	-- Pulse effect
+	createPulseEffect()
+end
+
+-- ========================================
+-- DRAGGING FUNCTIONALITY
+-- ========================================
+if SETTINGS.ENABLE_DRAGGING then
+	local dragging = false
+	local dragInput, mousePos, framePos
+	
+	local function update(input)
+		local delta = input.Position - mousePos
+		local newPosition = UDim2.new(
+			framePos.X.Scale,
+			framePos.X.Offset + delta.X,
+			framePos.Y.Scale,
+			framePos.Y.Offset + delta.Y
+		)
+		buttonFrame.Position = newPosition
+	end
+	
+	buttonFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+		   input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			mousePos = input.Position
+			framePos = buttonFrame.Position
+			
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	buttonFrame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or 
+		   input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+end
+
+-- ========================================
+-- BUTTON EVENTS
+-- ========================================
+iconButton.MouseButton1Click:Connect(toggleUI)
+
+-- Hover effect for PC
+if not isMobile then
+	iconButton.MouseEnter:Connect(function()
+		local hoverTween = TweenService:Create(
+			buttonFrame, 
+			TweenInfo.new(0.2), 
+			{
+				Size = buttonSize * 1.1,
+				BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+			}
+		)
+		table.insert(activeTweens, hoverTween)
+		hoverTween:Play()
+	end)
+	
+	iconButton.MouseLeave:Connect(function()
+		if not uiHidden then
+			local leaveTween = TweenService:Create(
+				buttonFrame, 
+				TweenInfo.new(0.2), 
+				{
+					Size = buttonSize,
+					BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+				}
+			)
+			table.insert(activeTweens, leaveTween)
+			leaveTween:Play()
+		end
+	end)
+end
+
+-- ========================================
+-- BREATHING ANIMATION (IDLE)
+-- ========================================
+local breatheTween = TweenService:Create(
+	stroke, 
+	TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+	{Transparency = 0.2}
+)
+breatheTween:Play()
+
+-- ========================================
+-- CLEANUP ON PLAYER LEAVE
+-- ========================================
+Players.PlayerRemoving:Connect(function(removingPlayer)
+	if removingPlayer == player then
+		cleanupTweens()
+		breatheTween:Cancel()
+		screenGui:Destroy()
+	end
+end)
+
+-- Cleanup on script destroy
+screenGui.AncestryChanged:Connect(function(_, parent)
+	if not parent then
+		cleanupTweens()
+		breatheTween:Cancel()
+	end
+end)
+
+print("✅ UI Toggle Script loaded successfully!")
+print("📱 Platform: " .. (isMobile and "Mobile" or "PC"))
+print("🎨 Dragging: " .. (SETTINGS.ENABLE_DRAGGING and "Enabled" or "Disabled"))
