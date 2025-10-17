@@ -10,8 +10,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- SETTINGS
 -- ========================================
 local SETTINGS = {
-	BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 30), -- Lebih kecil dari sebelumnya
-	BUTTON_SIZE_MOBILE = UDim2.new(0, 60, 0, 35), -- Lebih kecil dari sebelumnya
+	BUTTON_SIZE_PC = UDim2.new(0, 35, 0, 22), -- Ukuran sangat kecil dan compact
+	BUTTON_SIZE_MOBILE = UDim2.new(0, 45, 0, 28), -- Ukuran kecil untuk mobile
 	BUTTON_POSITION = UDim2.new(0, 10, 0, 10),
 	ANIMATION_SPEED = 0.3,
 	TEXT_VISIBLE = "UI",
@@ -84,7 +84,7 @@ textButton.Size = UDim2.new(1, 0, 1, 0)
 textButton.BackgroundTransparency = 1
 textButton.Text = SETTINGS.TEXT_VISIBLE
 textButton.TextColor3 = SETTINGS.COLOR_VISIBLE
-textButton.TextSize = isMobile and 16 or 14
+textButton.TextSize = isMobile and 13 or 11
 textButton.Font = Enum.Font.GothamBold
 textButton.AutoButtonColor = false
 textButton.Parent = buttonFrame
