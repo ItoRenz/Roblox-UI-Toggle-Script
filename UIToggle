@@ -10,12 +10,12 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- SETTINGS
 -- ========================================
 local SETTINGS = {
-	BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 50),
-	BUTTON_SIZE_MOBILE = UDim2.new(0, 70, 0, 70),
+	BUTTON_SIZE_PC = UDim2.new(0, 50, 0, 30), -- Lebih kecil dari sebelumnya
+	BUTTON_SIZE_MOBILE = UDim2.new(0, 60, 0, 35), -- Lebih kecil dari sebelumnya
 	BUTTON_POSITION = UDim2.new(0, 10, 0, 10),
 	ANIMATION_SPEED = 0.3,
-	ICON_VISIBLE = "👁️",
-	ICON_HIDDEN = "👁️‍🗨️",
+	TEXT_VISIBLE = "UI",
+	TEXT_HIDDEN = "UI",
 	COLOR_VISIBLE = Color3.fromRGB(100, 200, 255),
 	COLOR_HIDDEN = Color3.fromRGB(255, 100, 100),
 	ENABLE_DRAGGING = true,
@@ -57,7 +57,7 @@ buttonFrame.Parent = screenGui
 
 -- Rounded corners
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0.2, 0)
+corner.CornerRadius = UDim.new(0.25, 0)
 corner.Parent = buttonFrame
 
 -- Gradient for modern effect
@@ -73,21 +73,21 @@ gradient.Parent = buttonFrame
 local shadowStroke = Instance.new("UIStroke")
 shadowStroke.Name = "ShadowStroke"
 shadowStroke.Color = Color3.fromRGB(0, 0, 0)
-shadowStroke.Thickness = 3
+shadowStroke.Thickness = 2
 shadowStroke.Transparency = 0.7
 shadowStroke.Parent = buttonFrame
 
--- Icon button (Eye icon)
-local iconButton = Instance.new("TextButton")
-iconButton.Name = "IconButton"
-iconButton.Size = UDim2.new(1, 0, 1, 0)
-iconButton.BackgroundTransparency = 1
-iconButton.Text = SETTINGS.ICON_VISIBLE
-iconButton.TextColor3 = SETTINGS.COLOR_VISIBLE
-iconButton.TextSize = isMobile and 32 or 24
-iconButton.Font = Enum.Font.GothamBold
-iconButton.AutoButtonColor = false
-iconButton.Parent = buttonFrame
+-- Text button (UI text)
+local textButton = Instance.new("TextButton")
+textButton.Name = "TextButton"
+textButton.Size = UDim2.new(1, 0, 1, 0)
+textButton.BackgroundTransparency = 1
+textButton.Text = SETTINGS.TEXT_VISIBLE
+textButton.TextColor3 = SETTINGS.COLOR_VISIBLE
+textButton.TextSize = isMobile and 16 or 14
+textButton.Font = Enum.Font.GothamBold
+textButton.AutoButtonColor = false
+textButton.Parent = buttonFrame
 
 -- Glow effect frame
 local glowFrame = Instance.new("Frame")
@@ -100,7 +100,7 @@ glowFrame.ZIndex = 0
 glowFrame.Parent = buttonFrame
 
 local glowCorner = Instance.new("UICorner")
-glowCorner.CornerRadius = UDim.new(0.2, 0)
+glowCorner.CornerRadius = UDim.new(0.25, 0)
 glowCorner.Parent = glowFrame
 
 -- Stroke for border
@@ -189,15 +189,25 @@ local function toggleUI()
 		Enum.EasingDirection.Out
 	)
 	
-	local targetSize = uiHidden and buttonSize * 0.9 or buttonSize
+	-- Calculate target size properly
+	local baseWidth = buttonSize.X.Offset
+	local baseHeight = buttonSize.Y.Offset
+	local scaleFactor = uiHidden and 0.9 or 1
+	local targetSize = UDim2.new(
+		buttonSize.X.Scale,
+		baseWidth * scaleFactor,
+		buttonSize.Y.Scale,
+		baseHeight * scaleFactor
+	)
+	
 	local scaleTween = TweenService:Create(buttonFrame, tweenInfo, {Size = targetSize})
 	table.insert(activeTweens, scaleTween)
 	scaleTween:Play()
 	
-	-- Update icon and colors
+	-- Update text and colors
 	if uiHidden then
-		iconButton.Text = SETTINGS.ICON_HIDDEN
-		iconButton.TextColor3 = SETTINGS.COLOR_HIDDEN
+		textButton.Text = SETTINGS.TEXT_HIDDEN
+		textButton.TextColor3 = SETTINGS.COLOR_HIDDEN
 		stroke.Color = SETTINGS.COLOR_HIDDEN
 		glowFrame.BackgroundColor3 = SETTINGS.COLOR_HIDDEN
 		
@@ -209,8 +219,8 @@ local function toggleUI()
 			end
 		end
 	else
-		iconButton.Text = SETTINGS.ICON_VISIBLE
-		iconButton.TextColor3 = SETTINGS.COLOR_VISIBLE
+		textButton.Text = SETTINGS.TEXT_VISIBLE
+		textButton.TextColor3 = SETTINGS.COLOR_VISIBLE
 		stroke.Color = SETTINGS.COLOR_VISIBLE
 		glowFrame.BackgroundColor3 = SETTINGS.COLOR_VISIBLE
 		
@@ -272,16 +282,25 @@ end
 -- ========================================
 -- BUTTON EVENTS
 -- ========================================
-iconButton.MouseButton1Click:Connect(toggleUI)
+textButton.MouseButton1Click:Connect(toggleUI)
 
 -- Hover effect for PC
 if not isMobile then
-	iconButton.MouseEnter:Connect(function()
+	textButton.MouseEnter:Connect(function()
+		local baseWidth = buttonSize.X.Offset
+		local baseHeight = buttonSize.Y.Offset
+		local hoverSize = UDim2.new(
+			buttonSize.X.Scale,
+			baseWidth * 1.1,
+			buttonSize.Y.Scale,
+			baseHeight * 1.1
+		)
+		
 		local hoverTween = TweenService:Create(
 			buttonFrame, 
 			TweenInfo.new(0.2), 
 			{
-				Size = buttonSize * 1.1,
+				Size = hoverSize,
 				BackgroundColor3 = Color3.fromRGB(40, 40, 50)
 			}
 		)
@@ -289,7 +308,7 @@ if not isMobile then
 		hoverTween:Play()
 	end)
 	
-	iconButton.MouseLeave:Connect(function()
+	textButton.MouseLeave:Connect(function()
 		if not uiHidden then
 			local leaveTween = TweenService:Create(
 				buttonFrame, 
